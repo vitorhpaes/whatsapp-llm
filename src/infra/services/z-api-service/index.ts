@@ -1,13 +1,11 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const BASE_URL = process.env.ZAPI_BASE_URL || 'https://api.z-api.io';
 const INSTANCE_ID = process.env.ZAPI_INSTANCE_ID!;
 const INSTANCE_TOKEN = process.env.ZAPI_TOKEN!;
 const CLIENT_TOKEN = process.env.ZAPI_CLIENT_TOKEN!;
-export class ZApiService {
+
+export default class ZApiService {
   private readonly axios: AxiosInstance;
 
   constructor() {
@@ -15,10 +13,26 @@ export class ZApiService {
       baseURL: `${BASE_URL}/instances/${INSTANCE_ID}/token/${INSTANCE_TOKEN}`,
       headers: {
         'Content-Type': 'application/json',
-        'Client-Token':
-          CLIENT_TOKEN,
+        'Client-Token': CLIENT_TOKEN,
       },
     });
+  }
+
+  public modifyChat(
+    phone: string,
+    action:
+      | 'read'
+      | 'unread'
+      | 'archive'
+      | 'unarchive'
+      | 'pin'
+      | 'unpin'
+      | 'mute'
+      | 'unmute'
+      | 'clear'
+      | 'delete',
+  ): Promise<AxiosResponse<{ value: boolean }>> {
+    return this.axios.post('/modify-chat', { phone, action });
   }
 
   // Instance routes
@@ -47,27 +61,52 @@ export class ZApiService {
   }
 
   // Messages routes
-  public sendText(phone: string, message: string, options?: { delayMessage?: number; delayTyping?: number; editMessageId?: string }): Promise<AxiosResponse> {
+  public sendText(
+    phone: string,
+    message: string,
+    options?: {
+      delayMessage?: number;
+      delayTyping?: number;
+      editMessageId?: string;
+    },
+  ): Promise<AxiosResponse> {
     return this.axios.post('/send-text', { phone, message, ...options });
   }
 
-  public forwardMessage(chatId: string, messageId: string): Promise<AxiosResponse> {
+  public forwardMessage(
+    chatId: string,
+    messageId: string,
+  ): Promise<AxiosResponse> {
     return this.axios.post('/forward-message', { chatId, messageId });
   }
 
-  public sendReaction(chatId: string, messageId: string, reaction: string): Promise<AxiosResponse> {
+  public sendReaction(
+    chatId: string,
+    messageId: string,
+    reaction: string,
+  ): Promise<AxiosResponse> {
     return this.axios.post('/send-reaction', { chatId, messageId, reaction });
   }
 
-  public deleteReaction(chatId: string, messageId: string): Promise<AxiosResponse> {
+  public deleteReaction(
+    chatId: string,
+    messageId: string,
+  ): Promise<AxiosResponse> {
     return this.axios.post('/delete-reaction', { chatId, messageId });
   }
 
-  public sendImage(phone: string, imageUrl: string, caption?: string): Promise<AxiosResponse> {
+  public sendImage(
+    phone: string,
+    imageUrl: string,
+    caption?: string,
+  ): Promise<AxiosResponse> {
     return this.axios.post('/send-image', { phone, url: imageUrl, caption });
   }
 
-  public sendSticker(phone: string, stickerUrl: string): Promise<AxiosResponse> {
+  public sendSticker(
+    phone: string,
+    stickerUrl: string,
+  ): Promise<AxiosResponse> {
     return this.axios.post('/send-sticker', { phone, url: stickerUrl });
   }
 
@@ -79,7 +118,11 @@ export class ZApiService {
     return this.axios.post('/send-audio', { phone, url: audioUrl });
   }
 
-  public sendVideo(phone: string, videoUrl: string, caption?: string): Promise<AxiosResponse> {
+  public sendVideo(
+    phone: string,
+    videoUrl: string,
+    caption?: string,
+  ): Promise<AxiosResponse> {
     return this.axios.post('/send-video', { phone, url: videoUrl, caption });
   }
 
@@ -87,19 +130,50 @@ export class ZApiService {
     return this.axios.post('/send-ptt', { phone, url: audioUrl });
   }
 
-  public sendDocument(phone: string, documentUrl: string, filename?: string): Promise<AxiosResponse> {
+  public sendDocument(
+    phone: string,
+    documentUrl: string,
+    filename?: string,
+  ): Promise<AxiosResponse> {
     return this.axios.post('/send-file', { phone, url: documentUrl, filename });
   }
 
-  public sendLink(phone: string, link: string, title?: string, description?: string, thumbnail?: string): Promise<AxiosResponse> {
-    return this.axios.post('/send-link', { phone, link, title, description, thumbnail });
+  public sendLink(
+    phone: string,
+    link: string,
+    title?: string,
+    description?: string,
+    thumbnail?: string,
+  ): Promise<AxiosResponse> {
+    return this.axios.post('/send-link', {
+      phone,
+      link,
+      title,
+      description,
+      thumbnail,
+    });
   }
 
-  public sendLocation(phone: string, latitude: number, longitude: number, name?: string, address?: string): Promise<AxiosResponse> {
-    return this.axios.post('/send-location', { phone, latitude, longitude, name, address });
+  public sendLocation(
+    phone: string,
+    latitude: number,
+    longitude: number,
+    name?: string,
+    address?: string,
+  ): Promise<AxiosResponse> {
+    return this.axios.post('/send-location', {
+      phone,
+      latitude,
+      longitude,
+      name,
+      address,
+    });
   }
 
-  public sendContact(phone: string, contact: { name: string; phone: string }): Promise<AxiosResponse> {
+  public sendContact(
+    phone: string,
+    contact: { name: string; phone: string },
+  ): Promise<AxiosResponse> {
     return this.axios.post('/send-contact', { phone, contact });
   }
 
