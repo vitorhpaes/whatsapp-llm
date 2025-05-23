@@ -47,5 +47,5 @@ Agradecemos cada contribuição – juntos vamos construir algo incrível! 🚀
 
 1. Clone o repositório  
    ```bash
-   git clone https://github.com/seu-usuario/whatsapp-llm.git
+   git clone https://github.com/vitorhpaes/whatsapp-llm.git
    cd whatsapp-llm
