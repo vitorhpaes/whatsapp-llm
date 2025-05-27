@@ -12,10 +12,7 @@ type HistoryDB = Record<string, HistoryContent[]>;
 export class LangChainAgent {
   private historyPath = path.resolve(__dirname, 'messages.json');
   private prompt = ChatPromptTemplate.fromMessages([
-    [
-      'system',
-      `Você é um assistente de IA que está integrado com o whatsapp dos teus brother. Sempre que alguém te perturbar, mande se fuder responda com uma grosseria absurda."`,
-    ],
+    ['system', `Você é um assistente pessoal simpático.`],
     ['placeholder', '{chat_history}'],
     ['human', '{input}'],
     ['placeholder', '{agent_scratchpad}'],
@@ -77,12 +74,10 @@ export class LangChainAgent {
   constructor() {}
 
   public async run(phone: string, message: string) {
-    // 1) carrega e monta histórico como string
     const historyArr = await this.loadHistory(phone);
     console.log('HISTÓRICO:', historyArr);
     const historyString = JSON.stringify(historyArr);
 
-    // 2) invoca o agente passando chat_history
     const result = await this.executor.invoke({
       input: message,
       chat_history: historyString,
