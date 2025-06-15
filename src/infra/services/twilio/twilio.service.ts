@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as Twilio from 'twilio';
+import Twilio from 'twilio';
 
 /**
  * Serviço para integrar com Twilio WhatsApp via SDK oficial.
@@ -98,5 +98,24 @@ export class TwilioService {
       ...(dateSentBefore ? { dateSentBefore } : {}),
     };
     return this.client.messages.list(opts);
+  }
+
+  async downloadTwilioFile(url: string) {
+    const accountSid = this.config.get<string>('TWILIO_ACCOUNT_SID');
+    const authToken = this.config.get<string>('TWILIO_AUTH_TOKEN');
+
+    const authHeader = Buffer.from(`${accountSid}:${authToken}`).toString(
+      'base64',
+    );
+
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Basic ${authHeader}`,
+      },
+    });
+
+    if (!response.ok) throw new Error(`Could not download Twilio file: ${url}`);
+
+    return response;
   }
 }
